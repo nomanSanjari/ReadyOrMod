@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -10,7 +11,7 @@ export const Container = styled.div`
 	justify-content: center;
 	align-items: center;
 	background-color: #212124;
-	color: white;
+	color: #98afc7;
 	font-family: "Source Code Pro", monospace;
 	font-optical-sizing: auto;
 	font-weight: 400;
