@@ -1,0 +1,3 @@
+infrastructure/creds.tf
+infrastructure/.terraform.lock.hcl
+infrastructure/.terraform
