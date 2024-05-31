@@ -49,6 +49,9 @@ class ReadyOrMod:
 
         # Function -> Select Directory
         def select_directory() -> None:
+            """
+            Function to select the game directory
+            """
             directory = filedialog.askdirectory()
             if directory:
                 text_field.config(state="normal")
@@ -102,6 +105,13 @@ class ReadyOrMod:
 
         # Function -> Select Mods
         def create_session_add_new() -> None:
+            """
+            Function to create a new session by selecting new mods
+            """
+            if not self.TO_ROOT:
+                self.update_message_box("No game directory selected...select game directory to continue\n")
+                return
+
             # Check if the repository directory has been selected
             if os.path.exists(self.TO_REPO): 
                 file_paths = filedialog.askopenfilenames(
@@ -158,11 +168,18 @@ class ReadyOrMod:
             session_id = get_session_id()
 
             # Create a new session with the ACTIVE list
-            self.start_sync(self.ACTIVE)
+            self.start_sync(self.ACTIVE, session_id)
             self.update_message_box(f"Session created with ID: {session_id}\n")
 
         # Function -> Add Existing Mods
         def create_session_add_existing() -> None:
+            """
+            Function to create a new session by selecting existing mods
+            """
+            if not self.TO_ROOT:
+                self.update_message_box("No game directory selected...select game directory to continue\n")
+                return
+
             self.REMOTE = self.list_mods()  # List all mods in the S3 bucket
 
             # synchronize the ACTIVE list with the REMOTE list
@@ -182,17 +199,24 @@ class ReadyOrMod:
             self.update_message_box(f"ACTIVE mods: \n")
             for mod in self.ACTIVE:
                 self.update_message_box(f"{mod}")
-                self.update_message_box(f"================\n")
+            self.update_message_box(f"================\n")
 
             # Get the session ID from the user to set as join key
             session_id = get_session_id()
 
             # Create a new session with the ACTIVE list
-            self.start_sync(self.ACTIVE)
+            self.start_sync(self.ACTIVE, session_id)
             self.update_message_box(f"Session created with ID: {session_id}\n")
 
 
         def join_session() -> None:
+            """
+            Function to join an existing session by providing the session ID
+            """
+            if not self.TO_ROOT:
+                self.update_message_box("No game directory selected...select game directory to continue\n")
+                return
+
             # Get the session ID from the user to join the session
             session_id = get_session_id()
 
@@ -314,7 +338,7 @@ class ReadyOrMod:
         shutil.copy(mod_name, self.TO_MODS)
 
 
-    def list_mods() -> list[str]:
+    def list_mods(self) -> list[str]:
         """
         List all mods in the S3 bucket
         
@@ -332,7 +356,7 @@ class ReadyOrMod:
         return REMOTE
 
 
-    def start_sync(self, ACTIVE: list[str]) -> None:
+    def start_sync(self, ACTIVE: list[str], session_id: str) -> None:
         """
         Start the synchronization process by creating a new session with the ACTIVE list
 
@@ -341,7 +365,6 @@ class ReadyOrMod:
         """
         url = "https://aizl9103i1.execute-api.ca-central-1.amazonaws.com/test/session"
 
-        session_id = input("Enter session ID: ")
         data = {
             "session_id": f"{session_id}",
             "mod_list": ACTIVE
